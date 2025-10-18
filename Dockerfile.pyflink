@@ -1,0 +1,30 @@
+# PyFlink를 지원하는 Flink Docker 이미지
+FROM flink:2.1.0-scala_2.12-java11
+
+# Python 3.11 및 JDK 설치
+USER root
+
+# JDK와 Python 설치
+RUN apt-get update -y && \
+    apt-get install -y \
+        python3.11 \
+        python3-pip \
+        python3.11-dev \
+        openjdk-11-jdk \
+        && \
+    rm -rf /var/lib/apt/lists/*
+
+# python 심볼릭 링크 생성
+RUN ln -s /usr/bin/python3.11 /usr/bin/python
+
+# JAVA_HOME 환경 변수 설정
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
+
+# PyFlink 설치
+RUN pip3 install --no-cache-dir apache-flink==2.1.0
+
+# Flink 사용자로 다시 전환
+USER flink
+
+WORKDIR /opt/flink
+

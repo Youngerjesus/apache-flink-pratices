@@ -1,0 +1,49 @@
+services:
+  jobmanager:
+    image: flink:2.1.0-scala_2.12-java11
+    container_name: flink-jobmanager
+    ports:
+      - "8081:8081"   # Web UI
+      - "6123:6123"   # RPC
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+    volumes:
+      - ./src:/opt/flink/src
+      - ./examples:/opt/flink/examples
+      - flink_data:/tmp/flink-checkpoints-directory
+      - flink_savepoints:/tmp/flink-savepoints-directory
+    networks:
+      - flink-network
+
+  taskmanager:
+    image: flink:2.1.0-scala_2.12-java11
+    container_name: flink-taskmanager
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2
+    volumes:
+      - ./src:/opt/flink/src
+      - ./examples:/opt/flink/examples
+      - flink_data:/tmp/flink-checkpoints-directory
+      - flink_savepoints:/tmp/flink-savepoints-directory
+    networks:
+      - flink-network
+    deploy:
+      replicas: 1
+
+volumes:
+  flink_data:
+  flink_savepoints:
+
+networks:
+  flink-network:
+    driver: bridge
+
