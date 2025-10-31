@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package scalper;
+
+// 거래소 식별자
+enum Exchange {
+  EXCHANGE_UNSPECIFIED = 0;
+  UPBIT = 1;
+  // 향후 추가 가능: BITHUMB = 2;
+}
+
+// 전일 대비 등락 상태
+enum ChangeType {
+  CHANGE_TYPE_UNSPECIFIED = 0;
+  RISE = 1;   // 상승
+  EVEN = 2;   // 보합
+  FALL = 3;   // 하락
+}
+
+// 매수/매도 구분
+enum AskBid {
+  ASK_BID_UNSPECIFIED = 0;
+  ASK = 1;    // 매도
+  BID = 2;    // 매수
+}
+
+// 스트림 데이터 타입
+enum StreamType {
+  STREAM_TYPE_UNSPECIFIED = 0;
+  SNAPSHOT = 1;
+  REALTIME = 2;
+}
+
+

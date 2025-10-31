@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "common.proto";
+
+package scalper;
+
+// 실시간 거래 체결 데이터 (Upbit 'trade' 타입)
+message Trade {
+  Exchange exchange = 1;
+  string code = 2;                          // 마켓 코드 (e.g., "KRW-BTC")
+  double trade_price = 3;                   // 체결 가격 (tp)
+  double trade_volume = 4;                  // 체결량 (tv)
+  AskBid ask_bid = 5;                       // 매수/매도 구분 (ab)
+  double prev_closing_price = 6;            // 전일 종가 (pcp)
+  ChangeType change = 7;                    // 전일 대비 등락 (c)
+  double change_price = 8;                  // 전일 대비 변동액 (cp)
+  google.protobuf.Timestamp trade_timestamp = 9; // 체결 시각 (ttms)
+  int64 sequential_id = 10;                 // 체결 고유 ID (sequential_id)
+  StreamType stream_type = 11;              // 스트림 타입 (st)
+  
+  // -- 내부적으로 추가하는 메타데이터 --
+  google.protobuf.Timestamp received_timestamp = 12; // 커넥터가 수신한 시각
+}
+
+// 호가창의 한 레벨 (매수 또는 매도)
+message OrderBookLevel {
+  double price = 1;                         // 호가
+  double size = 2;                          // 주문량
+}
+
+// 실시간 호가창 변경분 데이터 (Upbit 'orderbook' 타입)
+message OrderBookUpdate {
+  Exchange exchange = 1;
+  string code = 2;                          // 마켓 코드 (cd)
+  double total_ask_size = 3;                // 매도 주문 총량 (tas)
+  double total_bid_size = 4;                // 매수 주문 총량 (tbs)
+  repeated OrderBookLevel asks = 5;         // 매도 호가 목록 (orderbook_units)
+  repeated OrderBookLevel bids = 6;         // 매수 호가 목록 (orderbook_units)
+  StreamType stream_type = 7;               // 스트림 타입 (st)
+
+  // -- 내부적으로 추가하는 메타데이터 --
+  google.protobuf.Timestamp event_timestamp = 8;   // 호가창 변경 이벤트 시각 (업비트 원본 timestamp 필드)
+  google.protobuf.Timestamp received_timestamp = 9;  // 커넥터가 수신한 시각
+}
+
+
